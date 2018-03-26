@@ -1,29 +1,16 @@
-require_relative 'words_occurrences.rb'
 
 text = File.read('words.txt')
 filter = File.read('filter_words.txt')
-analyser = WordsAnalyser.new(text, filter)
 
-puts "Word count after filtering is: #{analyser.word_count}"
-puts "\n"
+words_occurrences = text.scan(/\w+/).reduce(Hash.new(0)){|res,w| res[w.downcase]+=1;res}.sort.to_h
 
-puts "The most frequent words are:"
-#WordsAnalyser.highest_occurring_words.each do |key, value|
-#  puts "  - #{key}: #{value} occurences"
-#end
-puts "\n"
+filtered_words ||= words_occurrences.reject do |word| filter.include?(word)
+end
 
-puts "The longest words are:"
-#WordsAnalyser.longest_words.each do |word|
-#  puts "  - #{word.first}: #{word.last} characters"
-#end
-puts "\n"
-
-puts "Word list:"
-#puts WordsAnalyser.html_list
-
-
-puts "JSON object:"
-#puts WordsAnalyser.json_list
-
-puts WordsAnalyser.word_occurrences
+puts words_occurrences
+puts "-"*20
+puts filtered_words
+puts "-"*20
+puts filtered_words.length
+puts "-"*20
+puts filtered_words.size
