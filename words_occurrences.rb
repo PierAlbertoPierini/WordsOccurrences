@@ -1,14 +1,13 @@
 require 'json'
 
-class WordsAnalyser
+class WordsOccurrences
   def initialize(text, filter)
     @words = text
     @filter = filter
   end
 
   def word_occurrences
-    @word_occurrences = words.scan(/\w+/).reduce(Hash.new(0)){|res,w| res[w.downcase]+=1;res}
-    put @word_occurrences
+    
   end
 
   def word_count
@@ -16,7 +15,7 @@ class WordsAnalyser
   end
 
   def highest_occurring_words
-    word_occurrences.group_by { |key, value| value }.max_by { |key, value| key }.last #I would like to decide how many words I can show
+    Hash[text_clean_words.sort_by { |k,v| -v }[0..4]]
   end
 
   def longest_words
