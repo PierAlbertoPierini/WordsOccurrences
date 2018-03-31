@@ -2,6 +2,7 @@ require 'json'
 
 class WordsOccurrencesPreprocessing
   WORDS_ONLY_REGEX = /[^\p{Alpha}']/i
+  #WORDS_ONLY_REGEX = /\p{L}/
   SPACE_ONLY_REGEX = /\s+/
   def self.to_words(text)
     text.gsub(WORDS_ONLY_REGEX, ' ').gsub(SPACE_ONLY_REGEX, ' ')
@@ -50,7 +51,5 @@ end
 private
 
 def highest_ranking(entries)
-  # Takes a hashmap of the form {"foo" => 100, "bar" => 45} and returns an array
-  # containing the entries (array-ified) with the highest number as a value.
   entries.group_by{|word, occs| occs}.sort.last.last
 end
