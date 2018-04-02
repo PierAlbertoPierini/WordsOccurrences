@@ -1,8 +1,8 @@
 require 'json'
 
-class WordsOccurrencesAnalyser
+class WordsAnalyser
   def initialize(text, filter)
-    @clean_text = text
+    @words = text
     @filter = filter
   end
 
@@ -27,7 +27,7 @@ class WordsOccurrencesAnalyser
     end.join("\n")
     "<ul>\n" + list + "\n</ul>"
   end
-  
+
   def json_list
     JSON.parse(word.to_json)
   end
@@ -36,5 +36,5 @@ end
 private
 
 def filtered_words
-    @filtered_words ||= @clean_text.reject do |word| @filter.include?(word)
+    @filtered_words ||= @words.reject do |word| @filter.include?(word)
 end
