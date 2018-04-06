@@ -1,9 +1,10 @@
 require 'json'
+require 'pry'
 
 class WordsAnalyser
   def initialize(text, filter)
-    @words = text
-    @filter = filter
+    @words = text.split
+    @filter = filter.split
   end
 
   def highest_occurring_words(number_words)
@@ -11,31 +12,37 @@ class WordsAnalyser
   end
 
   def words_occurrences
-    filtered_words.scan(/\w+/).reduce(Hash.new(0)){|res,w| res[w.downcase]+=1;res}.sort.to_h
+    @word_occurrences ||= filtered_words.inject(Hash.new(0)) do |result, word|
+      result[word] += 1
+      result
+    end
+    #filtered_words.scan(/\w+/).reduce(Hash.new(0)){|res,w| res[w.downcase]+=1;res}.sort.to_h
   end
 
   def text_list
-    list = word_occurrences.sort_by {|word, occs| occs}.reverse.map do |word, occs|
+    list = words_occurrences.sort_by {|word, occs| occs}.reverse.map do |word, occs|
       "  #{word}: #{occs}"
     end.join("\n")
     "\n" + list + "\n"
   end
 
   def html_list
-    list = word_occurrences.sort_by {|word, occs| occs}.reverse.map do |word, occs|
+    list = words_occurrences.sort_by {|word, occs| occs}.reverse.map do |word, occs|
       "  <li>#{word}: #{occs}</li>"
     end.join("\n")
     "<ul>\n" + list + "\n</ul>"
   end
 
   def json_list
-    JSON.parse(word.to_json)
+    JSON.parse(@words.to_json)
   end
 end
 
 private
 
 def filtered_words
-    @filtered_words ||= @words.reject do |word| @filter.include?(word)
+    @filtered_words ||= @words.reject do |word|
+      word.downcase!
+      @filter.include?(word)
 end
 end
