@@ -1,5 +1,4 @@
 require 'json'
-require 'pry'
 
 class WordsAnalyser
   def initialize(text, filter)
@@ -8,15 +7,21 @@ class WordsAnalyser
   end
 
   def highest_occurring_words(number_words)
-    Hash[filtered_words.sort_by { |k,v| -v }[0..number_words]].to_s
+    Hash[words_occurrences.sort_by { |k,v| -v }[0..(number_words-1)]]
   end
 
   def words_occurrences
-    @word_occurrences ||= filtered_words.inject(Hash.new(0)) do |result, word|
+    word_occurrences ||= filtered_words.inject(Hash.new(0)) do |result, word|
       result[word] += 1
       result
     end
-    #filtered_words.scan(/\w+/).reduce(Hash.new(0)){|res,w| res[w.downcase]+=1;res}.sort.to_h
+  end
+
+  def highest_occurring_words_list(number_words)
+    list = highest_occurring_words(number_words).sort_by {|word, occs| occs}.reverse.map do |word, occs|
+      "  #{word}: #{occs}"
+    end.join("\n")
+    "\n" + list + "\n"
   end
 
   def text_list
@@ -34,14 +39,14 @@ class WordsAnalyser
   end
 
   def json_list
-    JSON.parse(@words.to_json)
+    JSON.parse(filtered_words.to_json)
   end
 end
 
 private
 
 def filtered_words
-    @filtered_words ||= @words.reject do |word|
+    filtered_words ||= @words.reject do |word|
       word.downcase!
       @filter.include?(word)
 end
